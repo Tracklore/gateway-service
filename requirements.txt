@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+httpx
+python-jose
+passlib[bcrypt]
+pydantic
+pydantic-settings
+python-dotenv
+pytest
+pytest-mock
