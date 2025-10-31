@@ -62,6 +62,90 @@ def test_proxy_auth_service(mocker):
     assert response.status_code == 200
     assert response.json() == {"message": "auth service"}
 
+def test_proxy_badge_service(mocker):
+    reset_circuit_breakers()  # Reset before test
+    mocker.patch("app.api.routes.settings.badge_service_url", "http://test-badge-service")
+    mock_client = mocker.patch("app.api.routes.AsyncClient")
+    mock_client.return_value.__aenter__.return_value.request.return_value.status_code = 200
+    mock_client.return_value.__aenter__.return_value.request.return_value.content = b'{"message": "badge service"}'
+    mock_client.return_value.__aenter__.return_value.request.return_value.headers = {}
+
+    # Use a valid token for protected routes
+    token = create_test_token()
+    response = client.get("/badge/somepath", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 200
+    assert response.json() == {"message": "badge service"}
+
+def test_proxy_feed_service(mocker):
+    reset_circuit_breakers()  # Reset before test
+    mocker.patch("app.api.routes.settings.feed_service_url", "http://test-feed-service")
+    mock_client = mocker.patch("app.api.routes.AsyncClient")
+    mock_client.return_value.__aenter__.return_value.request.return_value.status_code = 200
+    mock_client.return_value.__aenter__.return_value.request.return_value.content = b'{"message": "feed service"}'
+    mock_client.return_value.__aenter__.return_value.request.return_value.headers = {}
+
+    # Use a valid token for protected routes
+    token = create_test_token()
+    response = client.get("/feed/somepath", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 200
+    assert response.json() == {"message": "feed service"}
+
+def test_proxy_messaging_service(mocker):
+    reset_circuit_breakers()  # Reset before test
+    mocker.patch("app.api.routes.settings.messaging_service_url", "http://test-messaging-service")
+    mock_client = mocker.patch("app.api.routes.AsyncClient")
+    mock_client.return_value.__aenter__.return_value.request.return_value.status_code = 200
+    mock_client.return_value.__aenter__.return_value.request.return_value.content = b'{"message": "messaging service"}'
+    mock_client.return_value.__aenter__.return_value.request.return_value.headers = {}
+
+    # Use a valid token for protected routes
+    token = create_test_token()
+    response = client.get("/messaging/somepath", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 200
+    assert response.json() == {"message": "messaging service"}
+
+def test_proxy_notification_service(mocker):
+    reset_circuit_breakers()  # Reset before test
+    mocker.patch("app.api.routes.settings.notification_service_url", "http://test-notification-service")
+    mock_client = mocker.patch("app.api.routes.AsyncClient")
+    mock_client.return_value.__aenter__.return_value.request.return_value.status_code = 200
+    mock_client.return_value.__aenter__.return_value.request.return_value.content = b'{"message": "notification service"}'
+    mock_client.return_value.__aenter__.return_value.request.return_value.headers = {}
+
+    # Use a valid token for protected routes
+    token = create_test_token()
+    response = client.get("/notification/somepath", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 200
+    assert response.json() == {"message": "notification service"}
+
+def test_proxy_project_service(mocker):
+    reset_circuit_breakers()  # Reset before test
+    mocker.patch("app.api.routes.settings.project_service_url", "http://test-project-service")
+    mock_client = mocker.patch("app.api.routes.AsyncClient")
+    mock_client.return_value.__aenter__.return_value.request.return_value.status_code = 200
+    mock_client.return_value.__aenter__.return_value.request.return_value.content = b'{"message": "project service"}'
+    mock_client.return_value.__aenter__.return_value.request.return_value.headers = {}
+
+    # Use a valid token for protected routes
+    token = create_test_token()
+    response = client.get("/project/somepath", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 200
+    assert response.json() == {"message": "project service"}
+
+def test_proxy_new_service(mocker):
+    reset_circuit_breakers()  # Reset before test
+    mocker.patch("app.api.routes.settings.new_service_url", "http://test-new-service")
+    mock_client = mocker.patch("app.api.routes.AsyncClient")
+    mock_client.return_value.__aenter__.return_value.request.return_value.status_code = 200
+    mock_client.return_value.__aenter__.return_value.request.return_value.content = b'{"message": "new service"}'
+    mock_client.return_value.__aenter__.return_value.request.return_value.headers = {}
+
+    # Use a valid token for protected routes
+    token = create_test_token()
+    response = client.get("/new/somepath", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 200
+    assert response.json() == {"message": "new service"}
+
 def test_proxy_unsupported_service():
     """Test proxying to an unsupported service returns 404"""
     reset_circuit_breakers()  # Reset before test

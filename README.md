@@ -49,6 +49,10 @@ The single entry point for the entire Tracklore platform. This microservice rout
 ### Development Mode
 
 ```bash
+# Using the run script (automatically activates virtual environment)
+./run.sh
+
+# Or manually:
 uvicorn app.main:app --reload
 ```
 
@@ -57,6 +61,10 @@ The service will be available at `http://localhost:8000`
 ### Production Mode
 
 ```bash
+# Using the run script (automatically activates virtual environment)
+./run.sh
+
+# Or manually:
 uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
@@ -80,8 +88,14 @@ All protected endpoints require a valid JWT token in the Authorization header:
 Authorization: Bearer <your-jwt-token>
 ```
 
-- `GET|POST|PUT|DELETE /user/{path}` - Routes to User Service
-- `GET|POST|PUT|DELETE /auth/{path}` - Routes to Auth Service
+- `GET|POST|PUT|DELETE /user/{path}` - Routes to User Service (port 8001)
+- `GET|POST|PUT|DELETE /auth/{path}` - Routes to Auth Service (port 8002)
+- `GET|POST|PUT|DELETE /badge/{path}` - Routes to Badge Service (port 8003)
+- `GET|POST|PUT|DELETE /feed/{path}` - Routes to Feed Service (port 8004)
+- `GET|POST|PUT|DELETE /messaging/{path}` - Routes to Messaging Service (port 8005)
+- `GET|POST|PUT|DELETE /notification/{path}` - Routes to Notification Service (port 8006)
+- `GET|POST|PUT|DELETE /project/{path}` - Routes to Project Service (port 8007)
+- `GET|POST|PUT|DELETE /new/{path}` - Routes to New Service (port 8008)
 
 ## Configuration
 
@@ -89,23 +103,80 @@ The service can be configured using environment variables:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| USER_SERVICE_URL | URL of the User Service | http://user-service:8000 |
-| AUTH_SERVICE_URL | URL of the Auth Service | http://auth-service:8000 |
+| USER_SERVICE_URL | URL of the User Service | http://user-service:8001 |
+| AUTH_SERVICE_URL | URL of the Auth Service | http://auth-service:8002 |
+| BADGE_SERVICE_URL | URL of the Badge Service | http://badge-service:8003 |
+| FEED_SERVICE_URL | URL of the Feed Service | http://feed-service:8004 |
+| MESSAGING_SERVICE_URL | URL of the Messaging Service | http://messaging-service:8005 |
+| NOTIFICATION_SERVICE_URL | URL of the Notification Service | http://notification-service:8006 |
+| PROJECT_SERVICE_URL | URL of the Project Service | http://project-service:8007 |
+| NEW_SERVICE_URL | URL of the New Service | http://new-service:8008 |
 | JWT_SECRET_KEY | Secret key for JWT signing | your-super-secret-jwt-key |
 
 ## Testing
 
-Run the test suite with pytest:
+### Running Tests
 
+The gateway service includes comprehensive tests covering unit, integration, performance, and edge cases.
+
+Run all tests:
 ```bash
+# Using the test script (automatically activates virtual environment)
+./test.sh
+
+# Or using the test runner
+./run_tests.sh
+
+# Or manually:
 pytest
 ```
 
-For test coverage:
-
+Run tests with coverage:
 ```bash
-pytest --cov=app
+pytest --cov=app --cov-report=term-missing --cov-report=html
 ```
+
+Run specific test suites:
+```bash
+# Unit tests
+pytest tests/test_routes.py tests/test_auth.py
+
+# Integration tests
+pytest tests/test_integration.py
+
+# Performance tests
+pytest tests/test_performance.py
+
+# Edge case tests
+pytest tests/test_edge_cases.py
+
+# Circuit breaker tests
+pytest tests/test_circuit_breaker.py
+
+# Authentication utility tests
+pytest tests/test_auth_utils.py
+```
+
+### Test Categories
+
+1. **Unit Tests**: Test individual components in isolation
+2. **Integration Tests**: Test the interaction between components
+3. **Performance Tests**: Test the performance and scalability
+4. **Edge Case Tests**: Test unusual or extreme scenarios
+5. **Authentication Tests**: Test JWT token handling
+6. **Circuit Breaker Tests**: Test the circuit breaker implementation
+
+### Test Coverage
+
+The tests cover:
+- All API endpoints
+- Authentication and authorization
+- Error handling scenarios
+- Circuit breaker functionality
+- Header and body processing
+- Performance under load
+- Edge cases and unusual inputs
+- Security considerations
 
 ## Security
 

@@ -1,4 +1,22 @@
-# Python base image
+# Multi-stage build for optimized image size
+# Build stage
+FROM python:3.11-slim as builder
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies if needed
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first to leverage Docker cache
+COPY gateway-service/requirements.txt .
+
+# Install Python dependencies
+RUN pip install --user --no-cache-dir -r requirements.txt
+
+# Production stage
 FROM python:3.11-slim
 
 # Set working directory
@@ -8,21 +26,21 @@ WORKDIR /app
 RUN groupadd --gid 1001 appgroup && \
     useradd --uid 1001 --gid 1001 --create-home --shell /bin/bash appuser
 
+# Copy installed Python packages from builder stage
+COPY --from=builder /root/.local /home/appuser/.local
+
 # Copy shared libraries
-COPY shared-libs /app/shared-libs
+COPY shared_libs/shared_libs /app/shared-libs
+
+# Copy gateway service code
+COPY gateway-service /app
 
 # Set proper ownership and permissions
 RUN chown -R 1001:1001 /app
 ENV PYTHONPATH="/app:/app/shared-libs"
 
-# Copy gateway service code
-COPY . /app
-
-# Change ownership of copied files
-RUN chown -R 1001:1001 /app
-
-# Install dependencies as root (required for package installation)
-RUN pip install --no-cache-dir -r requirements.txt
+# Ensure that the user's local packages are in the PATH
+ENV PATH=/home/appuser/.local/bin:$PATH
 
 # Switch to non-root user
 USER 1001
